@@ -1,70 +1,108 @@
 package main.java;
 
 import java.util.Map;
-import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class Menu {
-    int scanUserInputForFirstMenu() {
-        System.out.println(1 + ". Add an item");
-        System.out.println(2 + ". Display all items");
-        System.out.println(3 + ". Quit");
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Select menu 1, 2 or 3");
-        return scan.nextInt();
+    private double[] itemPrices;
+    private String[] itemNames;
+
+    Menu() {
+        this.itemPrices = new double[100];
+        this.itemNames = new String[100];
     }
 
-     String scanName() {
-        Scanner scan = new Scanner(System.in);
-        System.out.print("Name:");
-        return scan.next();
 
-    }
-
-    double scanPrice() {
-        Scanner scan = new Scanner(System.in);
-        System.out.print("Price($):");
-        return scan.nextDouble();
-    }
-
-     int scanUserInputForDisplayMenu() {
-        System.out.println();
-        System.out.println("1:" + " Display in original order");
-        System.out.println("2:" + " In accending order by price");
-        System.out.println("3:" + " In accending by order name");
-        System.out.println();
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Select 1, 2 or 3 ");
-        return scan.nextInt();
-    }
-
-     void displayNameAndPrice(double[] itemPrices, String[] itemsName, int itemCount) {
+    public void displayNameAndPrice( int itemCount) {
         for (int i = 0; i < itemCount; i++) {
-            System.out.println("Item: " + itemsName[i] + " " + itemPrices[i]);
+            System.out.println("Item: " + itemNames[i] + " " + itemPrices[i]);
         }
     }
 
 
-     double[] splice(double[] itemPrices, int itemCount) {
+    public double[] splice( int itemCount) {
         double[] newItemPrices = new double[itemCount];
         for (int i = 0; i < itemCount; i++) {
             newItemPrices[i] = itemPrices[i];
+            itemPrices = newItemPrices;
         }
-        return newItemPrices;
+        return itemPrices;
     }
 
-    String[] splice(String[] itemNames, int itemCount) {
+    String[] splices(  int itemCount) {
         String[] newItemNames = new String[itemCount];
         for (int i = 0; i < itemCount; i++) {
             newItemNames[i] = itemNames[i];
+            itemNames = newItemNames;
         }
-        return newItemNames;
+        return itemNames;
     }
 
 
+    public static void main(String[] args) {
+        Menu menu = new Menu();
+        Display display = new Display();
 
+        int addAnItem = 1;
+        int displayItems = 2;
+        int exitApp = 3;
+
+
+        int itemCount = 0;
+        boolean shouldContinue = true;
+        while (shouldContinue) {
+            int userChoise = display.scanUserInputForFirstMenu();
+
+            if (userChoise == addAnItem) {
+                menu.itemNames[itemCount] = display.scanName();
+                menu.itemPrices[itemCount] = display.scanPrice();
+                itemCount++;
+            }
+            if (userChoise == displayItems) {
+                for (int j = 0; j < itemCount; j++) {
+                    System.out.println(menu.itemNames[j] + " - " + menu.itemPrices[j]);
+                }
+                int userChoiceOfSubMenu = display.scanUserInputForDisplayMenu();
+                int DisplayInOriginalOrder = 1;
+                int displayByPrice = 2;
+                int displayByName = 3;
+
+                if (userChoiceOfSubMenu == DisplayInOriginalOrder) {
+                    menu.displayNameAndPrice( itemCount);
+                }
+
+                if (userChoiceOfSubMenu == displayByPrice) {
+                    double[] splicedItemPrices = menu.splice( itemCount);
+                    String[] splicedItemNames = menu.splices( itemCount);
+
+                    SortedMap<Double, String> sm = new TreeMap<>();
+
+                    for (int j = 0; j < splicedItemPrices.length; j++) {
+                        for (j = 0; j < splicedItemNames.length; j++) {
+                            sm.put(splicedItemPrices[j], (" - ") + splicedItemNames[j]);
+                        }
+                        for (Map.Entry mapElement : sm.entrySet()) {
+                            double key = (double) mapElement.getKey();
+                            String value = (String) mapElement.getValue();
+                            System.out.println(key + " " + value);
+                        }
+                    }
+                }
+                if (userChoiceOfSubMenu == displayByName) {
+
+                }
+            }
+            if (userChoise == exitApp) {
+                shouldContinue = false;
+            }
+            System.out.println();
+        }
+    }
 }
+
+
+
 
 
 
